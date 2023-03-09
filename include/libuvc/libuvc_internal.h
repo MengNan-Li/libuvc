@@ -232,6 +232,7 @@ typedef struct uvc_device_info {
 #endif
 
 #define LIBUVC_XFER_META_BUF_SIZE ( 4 * 1024 )
+#define LIBUVC_XFER_BUF_SIZE	( 16 * 1024 * 1024 )
 
 struct uvc_stream_handle {
   struct uvc_device_handle *devh;

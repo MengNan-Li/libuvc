@@ -802,6 +802,12 @@ uvc_error_t uvc_mjpeg2rgb(uvc_frame_t *in, uvc_frame_t *out);
 uvc_error_t uvc_mjpeg2gray(uvc_frame_t *in, uvc_frame_t *out);
 #endif
 
+uvc_error_t uvcSetData(uvc_device_handle_t *inUvcDeviceHandle,
+	uint16_t inUvcValue,
+	uint16_t inUvcIndex,
+	unsigned char *inSetData,
+	uint16_t inSetDataLen);
+
 #ifdef __cplusplus
 }
 #endif

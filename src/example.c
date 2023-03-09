@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
   /* Locates the first attached UVC device, stores in dev */
   res = uvc_find_device(
       ctx, &dev,
-      0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+      0x114d, 0x027c, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
 
   if (res < 0) {
     uvc_perror(res, "uvc_find_device"); /* no devices found */
@@ -158,16 +158,18 @@ int main(int argc, char **argv) {
       /* Try to negotiate first stream profile */
       res = uvc_get_stream_ctrl_format_size(
           devh, &ctrl, /* result stored in ctrl */
-          frame_format,
-          width, height, fps /* width, height, fps */
+          UVC_FRAME_FORMAT_YUYV, /* YUV 422, aka YUV 4:2:2. try _COMPRESSED */
+          640, 480, 30 /* width, height, fps */
       );
 
       /* Print out the result */
       uvc_print_stream_ctrl(&ctrl, stderr);
 
-      if (res < 0) {
-        uvc_perror(res, "get_mode"); /* device doesn't provide a matching stream */
-      } else {
+      // if (res < 0) {
+      //   uvc_perror(res, "get_mode"); /* device doesn't provide a matching stream */
+      // } 
+      // else 
+      {
         /* Start the video stream. The library will call user function cb:
          *   cb(frame, (void *) 12345)
          */

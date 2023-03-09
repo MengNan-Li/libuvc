@@ -2257,3 +2257,30 @@ uvc_error_t uvc_set_input_select(uvc_device_handle_t *devh, uint8_t selector) {
     return ret;
 }
 
+// for sunwin camera
+uvc_error_t uvcSetData(uvc_device_handle_t *inUvcDeviceHandle,
+	uint16_t inUvcValue,
+	uint16_t inUvcIndex,
+	unsigned char *inSetData,
+	uint16_t inSetDataLen)
+{
+	uvc_error_t ret;
+
+	ret = libusb_control_transfer(inUvcDeviceHandle->usb_devh,
+		0x21, //bmRequestType
+		0x01, //bRequest
+		inUvcValue, //wValue
+		inUvcIndex, //wIndex
+		inSetData, //inSetData
+		inSetDataLen, //inSetDataLen
+		0); //timeout
+
+	if (ret == inSetDataLen)
+	{
+		return UVC_SUCCESS;
+	}
+	else
+	{
+		return ret;
+	}
+}
