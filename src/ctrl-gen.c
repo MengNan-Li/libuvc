@@ -2257,8 +2257,7 @@ uvc_error_t uvc_set_input_select(uvc_device_handle_t *devh, uint8_t selector) {
     return ret;
 }
 
-// for sunwin camera
-uvc_error_t uvcSetData(uvc_device_handle_t *inUvcDeviceHandle,
+uvc_error_t zzyUvcSetCurData(uvc_device_handle_t *inUvcDeviceHandle,
 	uint16_t inUvcValue,
 	uint16_t inUvcIndex,
 	unsigned char *inSetData,
@@ -2283,4 +2282,124 @@ uvc_error_t uvcSetData(uvc_device_handle_t *inUvcDeviceHandle,
 	{
 		return ret;
 	}
+}
+
+int zzyUvcSetCurData1(uvc_device_handle_t *inUvcDeviceHandle,
+	const uint16_t inUvcValue,
+	unsigned char *inSetData,
+	const uint16_t inSetDataLen)
+{
+	int ret=-1;
+
+	ret = libusb_control_transfer(inUvcDeviceHandle->usb_devh,
+		REQ_TYPE_SET, //bmRequestType
+		UVC_SET_CUR, //bRequest
+		inUvcValue, //wValue
+		0x0600, //wIndex
+		inSetData, //inSetData
+		inSetDataLen, //inSetDataLen
+		0); //timeout
+
+	//printf("111 ret%d...\n", ret);
+	if (ret != (int)inSetDataLen)
+	{
+		printf("ret[%d] != inSetDataLen[%u] func[%s]...line[%d] error...\n", ret, inSetDataLen, __FUNCTION__, __LINE__);
+		ret = -1;
+	}
+
+	return ret;
+}
+
+
+int zzyUvcGetCurData1(uvc_device_handle_t *inUvcDeviceHandle,
+	const uint16_t inUvcValue,
+	unsigned char **outGetData,
+	const uint16_t inGetDataNeedLen)
+{
+	int ret=-1;
+	unsigned char *getData=NULL;
+
+	if (inGetDataNeedLen == 0)
+	{
+		printf("inGetDataNeedLen[%u] == 0 func[%s]...line[%d] error...\n", inGetDataNeedLen, __FUNCTION__, __LINE__);
+		goto FAIL;
+	}
+
+	getData = (unsigned char *)malloc(inGetDataNeedLen+1);
+	if (getData == NULL)
+	{
+		printf("malloc getData func[%s]...line[%d] error...\n", __FUNCTION__, __LINE__);
+		goto FAIL;
+	}
+	memset(getData, 0x00, inGetDataNeedLen+1);
+
+	ret = libusb_control_transfer(inUvcDeviceHandle->usb_devh,
+		REQ_TYPE_GET, //bmRequestType
+		UVC_GET_CUR, //bRequest
+		inUvcValue, //wValue
+		0x0600, //wIndex
+		getData, //getData
+		inGetDataNeedLen, //inGetDataNeedLen
+		0); //timeout
+
+	//printf("222 ret%d...\n", ret);
+
+	if (ret != (int)inGetDataNeedLen)
+	{
+		printf("ret[%d] != inGetDataNeedLen[%u] func[%s]...line[%d] error...\n", ret, inGetDataNeedLen, __FUNCTION__, __LINE__);
+		ret = -1;
+	}
+
+FAIL:
+	if (ret < 0)
+	{
+		if (getData != NULL)
+		{
+			free(getData);
+			getData = NULL;
+		}
+	}
+	else
+	{
+		*outGetData = getData;
+	}
+
+	return ret;
+}
+
+
+int zzyUvcGetCurData2(uvc_device_handle_t *inUvcDeviceHandle,
+	const uint16_t inUvcValue,
+	unsigned char *inGetData,
+	const uint16_t inGetDataLen)
+{
+	int ret=-1;
+
+	memset(inGetData, 0x00, inGetDataLen);
+
+	if (inGetDataLen == 0)
+	{
+		printf("inGetDataLen[%u] == 0 func[%s]...line[%d] error...\n", inGetDataLen, __FUNCTION__, __LINE__);
+		goto FAIL;
+	}
+
+	ret = libusb_control_transfer(inUvcDeviceHandle->usb_devh,
+		REQ_TYPE_GET, //bmRequestType
+		UVC_GET_CUR, //bRequest
+		inUvcValue, //wValue
+		0x0600, //wIndex
+		inGetData, //getData
+		inGetDataLen, //inGetDataLen
+		0); //timeout
+
+	//printf("222 ret%d...\n", ret);
+
+	if (ret < 0)
+	{
+		printf("ret[%d] < 0 func[%s]...line[%d] error...\n", ret, __FUNCTION__, __LINE__);
+		ret = -1;
+	}
+
+FAIL:
+	return ret;
 }

@@ -802,11 +802,27 @@ uvc_error_t uvc_mjpeg2rgb(uvc_frame_t *in, uvc_frame_t *out);
 uvc_error_t uvc_mjpeg2gray(uvc_frame_t *in, uvc_frame_t *out);
 #endif
 
-uvc_error_t uvcSetData(uvc_device_handle_t *inUvcDeviceHandle,
+uvc_error_t zzyUvcSetCurData(uvc_device_handle_t *inUvcDeviceHandle,
 	uint16_t inUvcValue,
 	uint16_t inUvcIndex,
 	unsigned char *inSetData,
 	uint16_t inSetDataLen);
+
+int zzyUvcSetCurData1(uvc_device_handle_t *inUvcDeviceHandle,
+	const uint16_t inUvcValue,
+	unsigned char *inSetData,
+	const uint16_t inSetDataLen);
+
+int zzyUvcGetCurData1(uvc_device_handle_t *inUvcDeviceHandle,
+	const uint16_t inUvcValue,
+	unsigned char **outGetData,
+	const uint16_t inGetDataNeedLen);
+
+int zzyUvcGetCurData2(uvc_device_handle_t *inUvcDeviceHandle,
+	const uint16_t inUvcValue,
+	unsigned char *inGetData,
+	const uint16_t inGetDataLen);
+
 
 #ifdef __cplusplus
 }
